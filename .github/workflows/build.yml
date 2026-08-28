@@ -143,6 +143,48 @@ jobs:
             APP_LABEL="$(head -1 web/app/src/main/assets/app_name.txt | tr -d '\r')"
           fi
 
+          # Cari file icon/logo di dalam ZIP (dipakai sebagai ikon aplikasi/launcher)
+          ICON=""
+          for pattern in icon.png logo.png app_icon.png ic_launcher.png favicon.png; do
+            ICON="$(find src -type f -iname "$pattern" -print -quit)"
+            [ -n "$ICON" ] && break
+          done
+          if [ -z "$ICON" ]; then
+            ICON="$(find src -type f \( -iname '*icon*.png' -o -iname '*logo*.png' \) -print -quit)"
+          fi
+
+          mkdir -p web/app/src/main/res/mipmap-mdpi web/app/src/main/res/mipmap-hdpi \
+                   web/app/src/main/res/mipmap-xhdpi web/app/src/main/res/mipmap-xxhdpi \
+                   web/app/src/main/res/mipmap-xxxhdpi
+
+          which convert >/dev/null 2>&1 || sudo apt-get update -qq && sudo apt-get install -y -qq imagemagick >/tmp/imagemagick.log 2>&1 || true
+
+          if [ -n "$ICON" ] && command -v convert >/dev/null 2>&1; then
+            echo "[ICON] Pakai icon dari ZIP: $ICON"
+            convert "$ICON" -resize 48x48   web/app/src/main/res/mipmap-mdpi/ic_launcher.png
+            convert "$ICON" -resize 72x72   web/app/src/main/res/mipmap-hdpi/ic_launcher.png
+            convert "$ICON" -resize 96x96   web/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            convert "$ICON" -resize 144x144 web/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            convert "$ICON" -resize 192x192 web/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          else
+            echo "::warning::[ICON] Tidak ada icon.png/logo.png di ZIP, membuat ikon default otomatis."
+            INIT="$(echo "$APP_LABEL" | cut -c1 | tr '[:lower:]' '[:upper:]')"
+            [ -n "$INIT" ] || INIT="A"
+            for size_name in "48x48:mdpi" "72x72:hdpi" "96x96:xhdpi" "144x144:xxhdpi" "192x192:xxxhdpi"; do
+              SZ="${size_name%%:*}"; DPI="${size_name##*:}"
+              PS="$(echo "$SZ" | cut -d'x' -f1)"
+              convert -size "$SZ" xc:'#3F51B5' -gravity center -fill white \
+                -pointsize "$((PS*2/3))" -font DejaVu-Sans-Bold -annotate 0 "$INIT" \
+                "web/app/src/main/res/mipmap-$DPI/ic_launcher.png" 2>/dev/null || \
+                convert -size "$SZ" xc:'#3F51B5' "web/app/src/main/res/mipmap-$DPI/ic_launcher.png"
+            done
+          fi
+
+          cat > web/gradle.properties <<'EOF'
+          android.useAndroidX=true
+          android.enableJetifier=true
+          EOF
+
           cat > web/settings.gradle <<'EOF'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
           dependencyResolutionManagement {
@@ -169,6 +211,9 @@ jobs:
               versionName '1.0'
             }
           }
+          dependencies {
+            implementation 'androidx.webkit:webkit:1.12.1'
+          }
           EOF
 
           cat > web/app/src/main/res/values/styles.xml <<'EOF'
@@ -188,7 +233,8 @@ jobs:
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
             <application android:theme="@style/AppTheme"
-              android:label="@string/app_name" android:usesCleartextTraffic="true">
+              android:label="@string/app_name" android:icon="@mipmap/ic_launcher"
+              android:usesCleartextTraffic="true">
               <activity android:name=".MainActivity" android:exported="true"
                 android:configChanges="orientation|screenSize|keyboardHidden">
                 <intent-filter>
@@ -205,13 +251,25 @@ jobs:
           import android.app.Activity;
           import android.os.Bundle;
           import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebResourceResponse;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
+          import androidx.webkit.WebViewAssetLoader;
           public class MainActivity extends Activity {
             WebView w;
+            WebViewAssetLoader assetLoader;
             public void onCreate(Bundle b) {
               super.onCreate(b);
+              // WebViewAssetLoader membuat file di assets/ diakses lewat domain virtual
+              // https://appassets.androidplatform.net/ , sehingga link/path ABSOLUT
+              // seperti "/login.html" atau "/js/app.js" tetap ketemu filenya
+              // (ini yang menyebabkan error "file:///login.html tidak ditemukan").
+              assetLoader = new WebViewAssetLoader.Builder()
+                  .addPathHandler("/", new WebViewAssetLoader.AssetsPathHandler(this))
+                  .build();
+
               w = new WebView(this);
               WebSettings s = w.getSettings();
               s.setJavaScriptEnabled(true);
@@ -219,14 +277,17 @@ jobs:
               s.setDatabaseEnabled(true);
               s.setAllowFileAccess(true);
               s.setAllowContentAccess(true);
-              s.setAllowFileAccessFromFileURLs(true);
-              s.setAllowUniversalAccessFromFileURLs(true);
               s.setLoadWithOverviewMode(true);
               s.setUseWideViewPort(true);
               s.setMediaPlaybackRequiresUserGesture(false);
-              w.setWebViewClient(new WebViewClient());
+              w.setWebViewClient(new WebViewClient() {
+                @Override
+                public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                  return assetLoader.shouldInterceptRequest(request.getUrl());
+                }
+              });
               w.setWebChromeClient(new WebChromeClient());
-              w.loadUrl("file:///android_asset/index.html");
+              w.loadUrl("https://appassets.androidplatform.net/assets/index.html");
               setContentView(w);
             }
             public void onBackPressed() {

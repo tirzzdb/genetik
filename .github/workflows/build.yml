@@ -270,8 +270,12 @@ jobs:
               // https://appassets.androidplatform.net/ , sehingga link/path ABSOLUT
               // seperti "/login.html" atau "/js/app.js" tetap ketemu filenya
               // (ini yang menyebabkan error "file:///login.html tidak ditemukan").
+              // "/assets/" dicek DULU (untuk load index.html awal), baru "/" sebagai
+              // fallback menangkap link ABSOLUT dari root seperti "/login.html",
+              // "/js/app.js" yang sering dipakai halaman multi-page seperti ini.
               assetLoader = new WebViewAssetLoader.Builder()
                   .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                  .addPathHandler("/", new WebViewAssetLoader.AssetsPathHandler(this))
                   .build();
 
               w = new WebView(this);

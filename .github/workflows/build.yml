@@ -137,24 +137,51 @@ jobs:
           test -f web/app/src/main/assets/index.html
           echo "[WEBVIEW] index.html size: $(wc -c < web/app/src/main/assets/index.html) bytes"
 
-          # App label: cari app_name.txt di MANA SAJA di dalam ZIP (bukan cuma sebelah index.html)
-          APP_LABEL="Web App"
+          # App label: dicari OTOMATIS, urutan prioritas:
+          # 1) app_name.txt (kalau ada, dipakai duluan / override)
+          # 2) tag <title> di file HTML utama
+          # 3) field "name" di package.json (root ZIP)
+          # 4) fallback default "Web App"
+          APP_LABEL=""
+
           APP_NAME_FILE="$(find src -type f -iname 'app_name.txt' -print -quit)"
           if [ -n "$APP_NAME_FILE" ]; then
             APP_LABEL="$(head -1 "$APP_NAME_FILE" | tr -d '\r')"
             echo "[NAME] Pakai app_name.txt: $APP_NAME_FILE -> $APP_LABEL"
-          else
-            echo "::warning::[NAME] app_name.txt tidak ditemukan di ZIP, pakai label default 'Web App'."
+          fi
+
+          if [ -z "$APP_LABEL" ]; then
+            TITLE="$(grep -o -m1 '<title>[^<]*</title>' "$HTML" 2>/dev/null | sed -E 's#</?title>##g' | tr -d '\r' | xargs)"
+            if [ -n "$TITLE" ]; then
+              APP_LABEL="$TITLE"
+              echo "[NAME] Pakai <title> dari $HTML -> $APP_LABEL"
+            fi
+          fi
+
+          if [ -z "$APP_LABEL" ]; then
+            PKG="$(find src -maxdepth 2 -type f -iname 'package.json' -print -quit)"
+            if [ -n "$PKG" ]; then
+              PKG_NAME="$(grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*"' "$PKG" | head -1 | sed -E 's/.*"name"[[:space:]]*:[[:space:]]*"([^"]*)"/\1/')"
+              if [ -n "$PKG_NAME" ]; then
+                APP_LABEL="$PKG_NAME"
+                echo "[NAME] Pakai \"name\" dari package.json ($PKG) -> $APP_LABEL"
+              fi
+            fi
+          fi
+
+          if [ -z "$APP_LABEL" ]; then
+            APP_LABEL="Web App"
+            echo "::warning::[NAME] Tidak ketemu app_name.txt / <title> / package.json \"name\" di ZIP, pakai default 'Web App'."
           fi
 
           # Cari file icon/logo di dalam ZIP (dipakai sebagai ikon aplikasi/launcher)
           ICON=""
-          for pattern in icon.png logo.png app_icon.png ic_launcher.png favicon.png; do
+          for pattern in pp.jpg icon.png logo.png app_icon.png ic_launcher.png favicon.png icon.jpg logo.jpg; do
             ICON="$(find src -type f -iname "$pattern" -print -quit)"
             [ -n "$ICON" ] && break
           done
           if [ -z "$ICON" ]; then
-            ICON="$(find src -type f \( -iname '*icon*.png' -o -iname '*logo*.png' \) -print -quit)"
+            ICON="$(find src -type f \( -iname '*icon*.png' -o -iname '*logo*.png' -o -iname '*icon*.jpg' -o -iname '*logo*.jpg' -o -iname '*icon*.jpeg' -o -iname '*logo*.jpeg' \) -print -quit)"
           fi
 
           mkdir -p web/app/src/main/res/mipmap-mdpi web/app/src/main/res/mipmap-hdpi \
@@ -270,8 +297,12 @@ jobs:
               // https://appassets.androidplatform.net/ , sehingga link/path ABSOLUT
               // seperti "/login.html" atau "/js/app.js" tetap ketemu filenya
               // (ini yang menyebabkan error "file:///login.html tidak ditemukan").
+              // "/assets/" dicek DULU (untuk load index.html awal), baru "/" sebagai
+              // fallback menangkap link ABSOLUT dari root seperti "/login.html",
+              // "/js/app.js" yang sering dipakai halaman multi-page seperti ini.
               assetLoader = new WebViewAssetLoader.Builder()
                   .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                  .addPathHandler("/", new WebViewAssetLoader.AssetsPathHandler(this))
                   .build();
 
               w = new WebView(this);

@@ -429,4 +429,3 @@ jobs:
           name: app-release
           path: output/app-release.apk
           retention-days: 30
-          

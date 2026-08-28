@@ -90,16 +90,58 @@ jobs:
         shell: bash
         run: |
           set -e
-          HTML="$(find src -type f -name index.html -print -quit)"
-          [ -n "$HTML" ] || HTML="$(find src -type f -name dashboard.html -print -quit)"
-          [ -n "$HTML" ] || HTML="$(find src -type f -name splash.html -print -quit)"
+          # Cari file HTML entry (prioritas nama umum)
+          HTML=""
+          for name in index.html dashboard.html splash.html home.html main.html app.html; do
+            HTML="$(find src -type f -name "$name" -print -quit)"
+            [ -n "$HTML" ] && break
+          done
           [ -n "$HTML" ] || HTML="$(find src -type f -name '*.html' -print -quit)"
-          [ -n "$HTML" ] || { echo "::error::File HTML tidak ditemukan."; exit 1; }
+          [ -n "$HTML" ] || { echo "::error::File HTML tidak ditemukan di ZIP."; find src -maxdepth 3 -type f | head -50; exit 1; }
+          echo "[WEBVIEW] HTML entry: $HTML"
 
           mkdir -p web/app/src/main/java/com/tirzz/webview \
                    web/app/src/main/res/values \
                    web/app/src/main/assets
-          cp -r "$(dirname "$HTML")"/. web/app/src/main/assets/
+
+          # Salin seluruh isi folder tempat HTML berada ke assets
+          HTML_DIR="$(dirname "$HTML")"
+          cp -a "$HTML_DIR"/. web/app/src/main/assets/
+
+          # Pastikan index.html ADA di root assets (MainActivity load path ini)
+          ENTRY_NAME="$(basename "$HTML")"
+          if [ ! -f web/app/src/main/assets/index.html ]; then
+            if [ -f "web/app/src/main/assets/$ENTRY_NAME" ]; then
+              cp "web/app/src/main/assets/$ENTRY_NAME" web/app/src/main/assets/index.html
+              echo "[WEBVIEW] Rename/copy $ENTRY_NAME → index.html"
+            else
+              # HTML mungkin di subfolder assets setelah copy
+              FOUND_IDX="$(find web/app/src/main/assets -type f -name index.html -print -quit)"
+              FOUND_ANY="$(find web/app/src/main/assets -type f -name '*.html' -print -quit)"
+              if [ -n "$FOUND_IDX" ]; then
+                cp "$FOUND_IDX" web/app/src/main/assets/index.html
+                echo "[WEBVIEW] Promote $FOUND_IDX → assets/index.html"
+              elif [ -n "$FOUND_ANY" ]; then
+                cp "$FOUND_ANY" web/app/src/main/assets/index.html
+                echo "[WEBVIEW] Promote $FOUND_ANY → assets/index.html"
+              else
+                echo "::error::[WEBVIEW] Tidak ada HTML di assets setelah copy."
+                find web/app/src/main/assets -type f | head -40
+                exit 1
+              fi
+            fi
+          fi
+
+          echo "[WEBVIEW] Isi assets (max 40 file):"
+          find web/app/src/main/assets -type f | head -40
+          test -f web/app/src/main/assets/index.html
+          echo "[WEBVIEW] index.html size: $(wc -c < web/app/src/main/assets/index.html) bytes"
+
+          # App label dari folder / nama file bila ada
+          APP_LABEL="Web App"
+          if [ -f web/app/src/main/assets/app_name.txt ]; then
+            APP_LABEL="$(head -1 web/app/src/main/assets/app_name.txt | tr -d '\r')"
+          fi
 
           cat > web/settings.gradle <<'EOF'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
@@ -135,12 +177,20 @@ jobs:
           </resources>
           EOF
 
+          cat > web/app/src/main/res/values/strings.xml <<EOF
+          <resources>
+            <string name="app_name">$APP_LABEL</string>
+          </resources>
+          EOF
+
           cat > web/app/src/main/AndroidManifest.xml <<'EOF'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.INTERNET"/>
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
             <application android:theme="@style/AppTheme"
-              android:label="Universal Web App" android:usesCleartextTraffic="true">
-              <activity android:name=".MainActivity" android:exported="true">
+              android:label="@string/app_name" android:usesCleartextTraffic="true">
+              <activity android:name=".MainActivity" android:exported="true"
+                android:configChanges="orientation|screenSize|keyboardHidden">
                 <intent-filter>
                   <action android:name="android.intent.action.MAIN"/>
                   <category android:name="android.intent.category.LAUNCHER"/>
@@ -154,20 +204,33 @@ jobs:
           package com.tirzz.webview;
           import android.app.Activity;
           import android.os.Bundle;
+          import android.webkit.WebChromeClient;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
           public class MainActivity extends Activity {
             WebView w;
             public void onCreate(Bundle b) {
-              super.onCreate(b); w=new WebView(this);
-              WebSettings s=w.getSettings();
-              s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true);
+              super.onCreate(b);
+              w = new WebView(this);
+              WebSettings s = w.getSettings();
+              s.setJavaScriptEnabled(true);
+              s.setDomStorageEnabled(true);
+              s.setDatabaseEnabled(true);
+              s.setAllowFileAccess(true);
+              s.setAllowContentAccess(true);
+              s.setAllowFileAccessFromFileURLs(true);
+              s.setAllowUniversalAccessFromFileURLs(true);
+              s.setLoadWithOverviewMode(true);
+              s.setUseWideViewPort(true);
+              s.setMediaPlaybackRequiresUserGesture(false);
               w.setWebViewClient(new WebViewClient());
-              w.loadUrl("file:///android_asset/index.html"); setContentView(w);
+              w.setWebChromeClient(new WebChromeClient());
+              w.loadUrl("file:///android_asset/index.html");
+              setContentView(w);
             }
             public void onBackPressed() {
-              if(w.canGoBack()) w.goBack(); else super.onBackPressed();
+              if (w != null && w.canGoBack()) w.goBack(); else super.onBackPressed();
             }
           }
           EOF

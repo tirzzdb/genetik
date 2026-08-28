@@ -137,10 +137,14 @@ jobs:
           test -f web/app/src/main/assets/index.html
           echo "[WEBVIEW] index.html size: $(wc -c < web/app/src/main/assets/index.html) bytes"
 
-          # App label dari folder / nama file bila ada
+          # App label: cari app_name.txt di MANA SAJA di dalam ZIP (bukan cuma sebelah index.html)
           APP_LABEL="Web App"
-          if [ -f web/app/src/main/assets/app_name.txt ]; then
-            APP_LABEL="$(head -1 web/app/src/main/assets/app_name.txt | tr -d '\r')"
+          APP_NAME_FILE="$(find src -type f -iname 'app_name.txt' -print -quit)"
+          if [ -n "$APP_NAME_FILE" ]; then
+            APP_LABEL="$(head -1 "$APP_NAME_FILE" | tr -d '\r')"
+            echo "[NAME] Pakai app_name.txt: $APP_NAME_FILE -> $APP_LABEL"
+          else
+            echo "::warning::[NAME] app_name.txt tidak ditemukan di ZIP, pakai label default 'Web App'."
           fi
 
           # Cari file icon/logo di dalam ZIP (dipakai sebagai ikon aplikasi/launcher)
@@ -267,7 +271,7 @@ jobs:
               // seperti "/login.html" atau "/js/app.js" tetap ketemu filenya
               // (ini yang menyebabkan error "file:///login.html tidak ditemukan").
               assetLoader = new WebViewAssetLoader.Builder()
-                  .addPathHandler("/", new WebViewAssetLoader.AssetsPathHandler(this))
+                  .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                   .build();
 
               w = new WebView(this);

@@ -195,23 +195,7 @@ jobs:
             exit 1
           fi
 
-          # Tanpa secret keystore → tetap sukses, kirim APK UNSIGNED (bisa di-sign manual)
-          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
-            echo "::warning::[SIGN] Secret keystore belum lengkap — upload APK UNSIGNED."
-            echo "Isi secret di repo genetik (Settings → Secrets → Actions):"
-            echo "  KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD"
-            cp output/app-release-unsigned.apk output/app-release.apk
-            ls -la output/app-release.apk
-            exit 0
-          fi
-
-          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > release.keystore
-          if [ ! -s release.keystore ]; then
-            echo "::error::[SIGN] KEYSTORE_BASE64 tidak valid (hasil decode kosong)."
-            exit 1
-          fi
-
-          # Deteksi build-tools otomatis (jangan hardcode 35.0.0)
+          # Deteksi build-tools otomatis
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
           BT=""
           for cand in 35.0.0 34.0.0 33.0.2 33.0.1 33.0.0 32.0.0; do
@@ -223,22 +207,60 @@ jobs:
           if [ -z "$BT" ]; then
             BT="$(ls -d "$SDK_ROOT"/build-tools/*/ 2>/dev/null | sort -V | tail -1 | sed 's:/*$::')"
           fi
-          if [ -z "$BT" ] || [ ! -x "$BT/zipalign" ]; then
+          if [ -z "$BT" ] || [ ! -x "$BT/zipalign" ] || [ ! -x "$BT/apksigner" ]; then
             echo "::error::[SIGN] build-tools (zipalign/apksigner) tidak ditemukan di $SDK_ROOT/build-tools"
             ls -la "$SDK_ROOT/build-tools" 2>/dev/null || true
             exit 1
           fi
           echo "Memakai build-tools: $BT"
 
+          KS_FILE="release.keystore"
+          KS_PASS=""
+          KS_ALIAS=""
+          KEY_PASS=""
+
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            echo "[SIGN] Memakai keystore dari secret repo..."
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$KS_FILE"
+            if [ ! -s "$KS_FILE" ]; then
+              echo "::error::[SIGN] KEYSTORE_BASE64 tidak valid (hasil decode kosong)."
+              exit 1
+            fi
+            KS_PASS="$KEYSTORE_PASSWORD"
+            KS_ALIAS="$KEY_ALIAS"
+            KEY_PASS="$KEY_PASSWORD"
+          else
+            # Secret kosong → buat debug keystore otomatis.
+            # APK unsigned TIDAK BISA di-install di Android ("paket tidak valid").
+            echo "::warning::[SIGN] Secret keystore belum lengkap — sign dengan DEBUG keystore otomatis."
+            echo "Untuk production, isi secret: KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD"
+            KS_PASS="android"
+            KS_ALIAS="androiddebugkey"
+            KEY_PASS="android"
+            keytool -genkeypair -v \
+              -keystore "$KS_FILE" \
+              -storepass "$KS_PASS" \
+              -alias "$KS_ALIAS" \
+              -keypass "$KEY_PASS" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Tirzz Debug,OU=Build,O=Tirzz,L=Jakarta,ST=JK,C=ID" \
+              >/tmp/keytool.log 2>&1
+            if [ ! -s "$KS_FILE" ]; then
+              echo "::error::[SIGN] Gagal membuat debug keystore."
+              cat /tmp/keytool.log 2>/dev/null || true
+              exit 1
+            fi
+          fi
+
           "$BT/zipalign" -f 4 output/app-release-unsigned.apk output/aligned.apk
           "$BT/apksigner" sign \
-            --ks release.keystore \
-            --ks-pass "pass:$KEYSTORE_PASSWORD" \
-            --ks-key-alias "$KEY_ALIAS" \
-            --key-pass "pass:$KEY_PASSWORD" \
+            --ks "$KS_FILE" \
+            --ks-pass "pass:$KS_PASS" \
+            --ks-key-alias "$KS_ALIAS" \
+            --key-pass "pass:$KEY_PASS" \
             --out output/app-release.apk output/aligned.apk
           "$BT/apksigner" verify --verbose output/app-release.apk
-          rm -f release.keystore output/app-release-unsigned.apk output/aligned.apk
+          rm -f "$KS_FILE" output/app-release-unsigned.apk output/aligned.apk
           echo "Sign berhasil: output/app-release.apk"
           ls -la output/app-release.apk
 

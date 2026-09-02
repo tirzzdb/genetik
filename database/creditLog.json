@@ -1,0 +1,16 @@
+[
+  {
+    "userId": 6304585438,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-07-31T11:43:03.692Z"
+  },
+  {
+    "userId": 8956059492,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-02T12:44:17.018Z"
+  }
+]

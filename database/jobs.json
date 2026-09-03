@@ -46,5 +46,16 @@
     "status": "success",
     "created_at": "2026-09-03T11:26:06.437Z",
     "completed_at": "2026-09-03T11:31:43.883Z"
+  },
+  "mtlgb1gzif7px": {
+    "job_id": "mtlgb1gzif7px",
+    "release_id": 381969299,
+    "release_tag": "build-mtlgb1gzif7px",
+    "run_id": 33750746311,
+    "user_id": 6304585438,
+    "analyze_only": false,
+    "build_type": "release",
+    "status": "pending",
+    "created_at": "2026-09-03T11:38:06.398Z"
   }
 }

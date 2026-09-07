@@ -1,4 +1,5 @@
 name: Flutter Build APK
+run-name: ${{ inputs.tag }}
 
 # Ditrigger oleh bot Telegram (Tirzz Build Bot) lewat workflow_dispatch.
 # Input dikirim oleh server.js -> triggerWorkflow(). Simpan file ini di repo target
@@ -108,4 +109,3 @@ jobs:
           path: project/build/app/outputs/flutter-apk/*.apk
           if-no-files-found: warn
           retention-days: 1
-          

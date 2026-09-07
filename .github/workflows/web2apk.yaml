@@ -1,4 +1,5 @@
 name: Web to APK Build
+run-name: ${{ inputs.tag }}
 
 # Ditrigger oleh bot Telegram (Tirzz Build Bot) lewat workflow_dispatch.
 # Input dikirim oleh server.js -> triggerWeb2ApkWorkflow().
@@ -256,4 +257,3 @@ jobs:
           path: ${{ steps.apk.outputs.path }}
           retention-days: 1
           if-no-files-found: error
-          

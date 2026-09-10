@@ -106,5 +106,16 @@
     "status": "failed",
     "created_at": "2026-09-06T07:08:45.550Z",
     "completed_at": "2026-09-06T07:09:30.293Z"
+  },
+  "mtw1wdf18zswy": {
+    "job_id": "mtw1wdf18zswy",
+    "release_id": 386641389,
+    "release_tag": "build-mtw1wdf18zswy",
+    "run_id": 34533437076,
+    "user_id": 7364011400,
+    "analyze_only": false,
+    "build_type": "release",
+    "status": "pending",
+    "created_at": "2026-09-10T21:40:14.770Z"
   }
 }

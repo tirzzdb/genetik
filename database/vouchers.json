@@ -4,5 +4,11 @@
     "maxUses": 30,
     "usedBy": [],
     "createdAt": "2026-09-18T08:26:50.176Z"
+  },
+  "TIRZZ-69A7120F": {
+    "amount": 9999,
+    "maxUses": 100000,
+    "usedBy": [],
+    "createdAt": "2026-09-18T17:16:04.010Z"
   }
 }

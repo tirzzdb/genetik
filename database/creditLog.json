@@ -110,5 +110,12 @@
     "amount": 50,
     "reason": "Redeem voucher",
     "at": "2026-09-18T08:35:57.283Z"
+  },
+  {
+    "userId": 1812479780,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-18T08:50:34.045Z"
   }
 ]

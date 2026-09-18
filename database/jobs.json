@@ -192,5 +192,16 @@
     "status": "failed",
     "created_at": "2026-09-18T09:35:06.275Z",
     "completed_at": "2026-09-18T09:40:11.801Z"
+  },
+  "mu6rq8phif7lu": {
+    "job_id": "mu6rq8phif7lu",
+    "release_id": 391360572,
+    "release_tag": "build-mu6rq8phif7lu",
+    "run_id": 35330803344,
+    "user_id": 8149852758,
+    "analyze_only": false,
+    "build_type": "release",
+    "status": "pending",
+    "created_at": "2026-09-18T09:41:03.225Z"
   }
 }

@@ -149,8 +149,8 @@
     "first_name": "𝖉1𝖐𝖆𝖆",
     "last_name": null,
     "joinedAt": "2026-09-18T08:09:13.964Z",
-    "lastSeenAt": "2026-09-18T08:09:13.964Z",
-    "startCount": 1
+    "lastSeenAt": "2026-09-18T10:27:17.046Z",
+    "startCount": 2
   },
   "8829210672": {
     "id": 8829210672,
@@ -159,6 +159,15 @@
     "last_name": null,
     "joinedAt": "2026-09-18T09:34:07.215Z",
     "lastSeenAt": "2026-09-18T09:34:07.215Z",
+    "startCount": 1
+  },
+  "8149852758": {
+    "id": 8149852758,
+    "username": "mklohama",
+    "first_name": "./𝙳𝚒𝚕𝚣𝚡𝙽𝚘𝚞𝚌𝚑𝚊 | 𝙳𝙻",
+    "last_name": null,
+    "joinedAt": "2026-09-18T09:39:47.120Z",
+    "lastSeenAt": "2026-09-18T09:39:47.120Z",
     "startCount": 1
   }
 }

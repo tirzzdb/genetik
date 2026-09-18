@@ -215,7 +215,8 @@
     "web_url": "https://www.saldox.my.id",
     "app_name": "SaldoX Digital",
     "build_type": "web2apk",
-    "status": "pending",
-    "created_at": "2026-09-18T10:48:05.839Z"
+    "status": "success",
+    "created_at": "2026-09-18T10:48:05.839Z",
+    "completed_at": "2026-09-18T10:51:44.871Z"
   }
 }

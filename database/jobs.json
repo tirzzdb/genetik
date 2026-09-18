@@ -292,5 +292,16 @@
     "status": "failed",
     "created_at": "2026-09-18T22:11:59.621Z",
     "completed_at": "2026-09-18T22:12:32.892Z"
+  },
+  "mu7jxnidx2df9": {
+    "job_id": "mu7jxnidx2df9",
+    "release_id": 391828425,
+    "release_tag": "build-mu7jxnidx2df9",
+    "run_id": 35403282320,
+    "user_id": 8740840804,
+    "analyze_only": false,
+    "build_type": "release",
+    "status": "pending",
+    "created_at": "2026-09-18T22:50:37.123Z"
   }
 }

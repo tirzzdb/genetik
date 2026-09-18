@@ -223,5 +223,14 @@
     "joinedAt": "2026-09-18T17:14:10.701Z",
     "lastSeenAt": "2026-09-18T17:14:11.484Z",
     "startCount": 2
+  },
+  "8888883131": {
+    "id": 8888883131,
+    "username": "ID_8888883131",
+    "first_name": "Rafz²⁰¹³",
+    "last_name": null,
+    "joinedAt": "2026-09-18T17:18:19.905Z",
+    "lastSeenAt": "2026-09-18T17:18:19.905Z",
+    "startCount": 1
   }
 }

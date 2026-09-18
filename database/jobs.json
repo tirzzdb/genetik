@@ -204,5 +204,18 @@
     "status": "failed",
     "created_at": "2026-09-18T09:41:03.225Z",
     "completed_at": "2026-09-18T09:41:36.775Z"
+  },
+  "mu6u4lkgh75i0": {
+    "job_id": "mu6u4lkgh75i0",
+    "type": "web2apk",
+    "release_id": null,
+    "release_tag": "web2apk-mu6u4lkgh75i0",
+    "run_id": 35336486586,
+    "user_id": 7787277273,
+    "web_url": "https://www.saldox.my.id",
+    "app_name": "SaldoX Digital",
+    "build_type": "web2apk",
+    "status": "pending",
+    "created_at": "2026-09-18T10:48:05.839Z"
   }
 }

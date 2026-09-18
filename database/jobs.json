@@ -130,5 +130,16 @@
     "status": "success",
     "created_at": "2026-09-13T06:33:43.084Z",
     "completed_at": "2026-09-13T06:39:47.075Z"
+  },
+  "mu6ow4a0vmolx": {
+    "job_id": "mu6ow4a0vmolx",
+    "release_id": 391315095,
+    "release_tag": "build-mu6ow4a0vmolx",
+    "run_id": 35323958375,
+    "user_id": 8524777510,
+    "analyze_only": false,
+    "build_type": "release",
+    "status": "pending",
+    "created_at": "2026-09-18T08:21:35.719Z"
   }
 }

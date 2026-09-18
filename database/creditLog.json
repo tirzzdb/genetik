@@ -75,5 +75,12 @@
     "amount": 5,
     "reason": "Kredit awal (user baru)",
     "at": "2026-09-18T08:15:35.467Z"
+  },
+  {
+    "userId": 8524777510,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-18T08:20:37.040Z"
   }
 ]

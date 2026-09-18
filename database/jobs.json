@@ -232,5 +232,16 @@
     "status": "success",
     "created_at": "2026-09-18T11:01:52.222Z",
     "completed_at": "2026-09-18T11:05:50.859Z"
+  },
+  "mu6w60r0d5iua": {
+    "job_id": "mu6w60r0d5iua",
+    "release_id": 391431414,
+    "release_tag": "build-mu6w60r0d5iua",
+    "run_id": 35341177735,
+    "user_id": 8966733694,
+    "analyze_only": false,
+    "build_type": "release",
+    "status": "pending",
+    "created_at": "2026-09-18T11:45:17.865Z"
   }
 }

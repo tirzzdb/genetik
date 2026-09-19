@@ -212,8 +212,8 @@
     "first_name": "友",
     "last_name": "𝗥𝗶𝘆𝘇𝗗𝗲𝗥𝘆𝗼 𝐗𝟑 #𝗦𝗧 #𝗪𝗜𝗡𝗧𝗘𝗥 #𝗡5 ☇𝗻𝘇𝘅𝗶𝗼𝗳𝗳! ᎬᏕ ᏦᏒᎨᎷ Ꮰ",
     "joinedAt": "2026-09-18T17:14:09.775Z",
-    "lastSeenAt": "2026-09-19T06:21:08.609Z",
-    "startCount": 10
+    "lastSeenAt": "2026-09-19T15:12:45.395Z",
+    "startCount": 11
   },
   "8789600327": {
     "id": 8789600327,
@@ -304,5 +304,23 @@
     "joinedAt": "2026-09-19T11:57:29.406Z",
     "lastSeenAt": "2026-09-19T12:13:48.283Z",
     "startCount": 2
+  },
+  "8196343950": {
+    "id": 8196343950,
+    "username": "BOXIN1000",
+    "first_name": "BOXIN",
+    "last_name": null,
+    "joinedAt": "2026-09-19T12:57:50.890Z",
+    "lastSeenAt": "2026-09-19T12:57:50.890Z",
+    "startCount": 1
+  },
+  "8957462071": {
+    "id": 8957462071,
+    "username": "Kenken2764",
+    "first_name": "Kenken 𝑴𝒐𝑫𝒛",
+    "last_name": null,
+    "joinedAt": "2026-09-19T13:04:16.037Z",
+    "lastSeenAt": "2026-09-19T13:04:16.037Z",
+    "startCount": 1
   }
 }

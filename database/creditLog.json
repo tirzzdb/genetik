@@ -336,17 +336,31 @@
     "at": "2026-09-19T05:50:20.946Z"
   },
   {
-    "userId": 8928085187,
-    "type": "spend",
-    "amount": 1,
-    "reason": "Rename Domain",
-    "at": "2026-09-19T06:50:29.515Z"
-  },
-  {
-    "userId": 8443523822,
+    "userId": 8506511217,
     "type": "earn",
     "amount": 5,
     "reason": "Kredit awal (user baru)",
-    "at": "2026-09-19T10:30:20.450Z"
+    "at": "2026-09-19T07:59:02.020Z"
+  },
+  {
+    "userId": 859743646,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T08:00:27.117Z"
+  },
+  {
+    "userId": 7462658464,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T09:20:41.364Z"
+  },
+  {
+    "userId": 8006864150,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T10:34:12.871Z"
   }
 ]

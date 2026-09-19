@@ -387,7 +387,8 @@
     "web_url": "https://r1zretro.vercel.app",
     "app_name": "R1zShop",
     "build_type": "web2apk",
-    "status": "pending",
-    "created_at": "2026-09-19T14:33:57.684Z"
+    "status": "success",
+    "created_at": "2026-09-19T14:33:57.684Z",
+    "completed_at": "2026-09-19T14:37:59.549Z"
   }
 }

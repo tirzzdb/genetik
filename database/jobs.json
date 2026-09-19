@@ -376,5 +376,18 @@
     "status": "failed",
     "created_at": "2026-09-19T11:31:20.389Z",
     "completed_at": "2026-09-19T11:37:18.579Z"
+  },
+  "mu8hmwry6gkg9": {
+    "job_id": "mu8hmwry6gkg9",
+    "type": "web2apk",
+    "release_id": null,
+    "release_tag": "web2apk-mu8hmwry6gkg9",
+    "run_id": 35449124837,
+    "user_id": 8029327190,
+    "web_url": "https://r1zretro.vercel.app",
+    "app_name": "R1zShop",
+    "build_type": "web2apk",
+    "status": "pending",
+    "created_at": "2026-09-19T14:33:57.684Z"
   }
 }

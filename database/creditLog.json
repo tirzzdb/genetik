@@ -336,38 +336,66 @@
     "at": "2026-09-19T05:50:20.946Z"
   },
   {
-    "userId": 8928085187,
-    "type": "spend",
-    "amount": 1,
-    "reason": "Rename Domain",
-    "at": "2026-09-19T06:50:29.515Z"
-  },
-  {
-    "userId": 8443523822,
+    "userId": 8506511217,
     "type": "earn",
     "amount": 5,
     "reason": "Kredit awal (user baru)",
-    "at": "2026-09-19T10:30:20.450Z"
+    "at": "2026-09-19T07:59:02.020Z"
   },
   {
-    "userId": 8102755411,
+    "userId": 859743646,
     "type": "earn",
     "amount": 5,
     "reason": "Kredit awal (user baru)",
-    "at": "2026-09-19T10:33:10.916Z"
+    "at": "2026-09-19T08:00:27.117Z"
   },
   {
-    "userId": 6524025136,
+    "userId": 7462658464,
     "type": "earn",
     "amount": 5,
     "reason": "Kredit awal (user baru)",
-    "at": "2026-09-19T10:56:26.479Z"
+    "at": "2026-09-19T09:20:41.364Z"
   },
   {
-    "userId": 8761253877,
+    "userId": 8006864150,
     "type": "earn",
     "amount": 5,
     "reason": "Kredit awal (user baru)",
-    "at": "2026-09-19T11:57:29.403Z"
+    "at": "2026-09-19T10:34:12.871Z"
+  },
+  {
+    "userId": 6871644281,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T10:35:02.396Z"
+  },
+  {
+    "userId": 5704963734,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T10:40:58.967Z"
+  },
+  {
+    "userId": 8490726708,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T10:45:22.073Z"
+  },
+  {
+    "userId": 8180746738,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T10:48:07.584Z"
+  },
+  {
+    "userId": 8029327190,
+    "type": "earn",
+    "amount": 5,
+    "reason": "Kredit awal (user baru)",
+    "at": "2026-09-19T14:31:27.218Z"
   }
 ]
